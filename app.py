@@ -1,269 +1,100 @@
-import os
-import secrets
-from flask import Flask, request, jsonify, render_template_string
 
-app = Flask(__name__)
+Search logs
 
-ADMIN_PASSWORD = "MY_SUPER_SECRET_PASSWORD"
-DB_FILE = "keys_db.txt"
-VERSION = "2.2.0"
-FREE_PUBLIC_KEY = "whyen_free_unlimited"
 
-def load_keys_with_roles():
-    keys_dict = {
-        FREE_PUBLIC_KEY: "free",
-        "whyen_master_owner_key": "owner"
-    }
-    if not os.path.exists(DB_FILE):
-        return keys_dict
-        
-    with open(DB_FILE, "r") as f:
-        for line in f:
-            if "|" in line:
-                key, role = line.strip().split("|", 1)
-                keys_dict[key] = role
-    return keys_dict
+Live tail
 
-def save_key_with_role(key, role):
-    with open(DB_FILE, "a") as f:
-        f.write(f"{key}|{role}\n")
 
-# --- КРАСИВЫЙ СТИЛЬНЫЙ ИНТЕРФЕЙС ВЛАДЕЛЬЦА ---
-@app.route("/admin", methods=["GET", "POST"])
-def admin_panel():
-    password = request.args.get("pass") or request.form.get("pass")
-    if password != ADMIN_PASSWORD:
-        return "<h1 style='color:#ef4444; text-align:center; font-family:sans-serif; margin-top:50px;'>🛑 ДОСТУП ЗАПРЕЩЕН</h1>", 403
 
-    generated_key = None
-    assigned_role = None
-    if request.method == "POST" and request.form.get("action") == "generate":
-        assigned_role = request.form.get("role", "premium")
-        generated_key = f"whyen_{secrets.token_hex(8)}"
-        save_key_with_role(generated_key, assigned_role)
-
-    all_keys = load_keys_with_roles()
-    
+==> Downloading cache...
+==> Cloning from https://github.com/WHYEN-AI/whyen-auth
+==> Checking out commit 7e22498b9bc417f643e283f18031182b43b199f0 in branch main
+==> Downloaded 1.1MB in 0s. Extraction took 0s.
+==> Using Python version 3.14.3 (default)
+==> Docs on specifying a Python version: https://render.com/docs/python-version
+==> Installing Python version 3.14.3...
+==> Using Poetry version 2.1.3 (default)
+==> Docs on specifying a Poetry version: https://render.com/docs/poetry-version
+==> Running build command 'pip install flask gunicorn'...
+Collecting flask
+  Using cached flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+Collecting gunicorn
+  Using cached gunicorn-26.2.0-py3-none-any.whl.metadata (5.5 kB)
+Collecting blinker>=1.9.0 (from flask)
+  Using cached blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting click>=8.1.3 (from flask)
+  Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting itsdangerous>=2.2.0 (from flask)
+  Using cached itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting jinja2>=3.1.2 (from flask)
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting markupsafe>=2.1.1 (from flask)
+  Using cached markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting werkzeug>=3.1.0 (from flask)
+  Using cached werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+Using cached flask-3.1.3-py3-none-any.whl (103 kB)
+Using cached gunicorn-26.2.0-py3-none-any.whl (228 kB)
+Using cached blinker-1.9.0-py3-none-any.whl (8.5 kB)
+Using cached click-8.5.0-py3-none-any.whl (125 kB)
+Using cached itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Using cached markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (23 kB)
+Using cached werkzeug-3.1.8-py3-none-any.whl (226 kB)
+Installing collected packages: markupsafe, itsdangerous, gunicorn, click, blinker, werkzeug, jinja2, flask
+Successfully installed blinker-1.9.0 click-8.5.0 flask-3.1.3 gunicorn-26.2.0 itsdangerous-2.2.0 jinja2-3.1.6 markupsafe-3.0.3 werkzeug-3.1.8
+[notice] A new release of pip is available: 25.3 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+==> Uploading build...
+==> Uploaded in 1.7s. Compression took 1.0s
+==> Build successful 🎉
+==> Deploying...
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+==> Running 'gunicorn app:app'
+Traceback (most recent call last):
+  File "/opt/render/project/src/.venv/bin/gunicorn", line 7, in <module>
+    sys.exit(run())
+             ~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+    ~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+    ~~~~~~~^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/arbiter.py", line 63, in __init__
+    self.setup(app)
+    ~~~~~~~~~~^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/arbiter.py", line 164, in setup
+    self.app.wsgi()
+    ~~~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/app/base.py", line 66, in wsgi
+    self.callable = self.load()
+                    ~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+    return self.load_wsgiapp()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+    return util.import_app(self.app_uri)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/gunicorn/util.py", line 420, in import_app
+    mod = importlib.import_module(module)
+  File "/opt/render/project/python/Python-3.14.3/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1398, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 893, in get_code
+  File "<frozen importlib._bootstrap_external>", line 823, in source_to_code
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/opt/render/project/src/app.py", line 47
     html = """
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>WHYEN Core OS v{{ version }}</title>
-        <!-- Красивый футуристичный шрифт -->
-        <link rel="preconnect" href="https://googleapis.com">
-        <link rel="preconnect" href="https://gstatic.com" crossorigin>
-        <link href="https://googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-        <!-- Иконки -->
-        <link rel="stylesheet" href="https://cloudflare.com">
-        
-        <style>
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-                font-family: 'Plus Jakarta Sans', sans-serif;
-            }
-            body {
-                background: linear-gradient(135deg, #0f0c1b 0%, #151124 50%, #060409 100%);
-                color: #e2e8f0;
-                min-height: 100vh;
-                padding: 40px 20px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .container {
-                width: 100%;
-                max-width: 600px;
-                background: rgba(26, 21, 44, 0.45);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border: 1px solid rgba(168, 85, 247, 0.25);
-                border-radius: 24px;
-                padding: 40px;
-                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-            }
-            .header {
-                text-align: center;
-                margin-bottom: 35px;
-            }
-            .logo-panel {
-                font-size: 32px;
-                font-weight: 800;
-                letter-spacing: -1px;
-                background: linear-gradient(45deg, #a855f7 0%, #6366f1 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                margin-bottom: 5px;
-            }
-            .subtitle {
-                color: #71717a;
-                font-size: 14px;
-                font-weight: 500;
-            }
-            .form-box {
-                background: rgba(15, 12, 27, 0.6);
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                padding: 24px;
-                border-radius: 16px;
-                margin-bottom: 30px;
-            }
-            label {
-                display: block;
-                font-size: 13px;
-                font-weight: 700;
-                color: #94a3b8;
-                margin-bottom: 10px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            select {
-                width: 100%;
-                background: #141125;
-                color: #fff;
-                border: 1px solid rgba(168, 85, 247, 0.4);
-                padding: 14px;
-                border-radius: 12px;
-                font-size: 15px;
-                font-weight: 500;
-                outline: none;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                margin-bottom: 20px;
-            }
-            select:focus {
-                border-color: #a855f7;
-                box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-            }
-            button {
-                width: 100%;
-                background: linear-gradient(90deg, #a855f7 0%, #6366f1 100%);
-                color: #fff;
-                border: none;
-                padding: 16px;
-                border-radius: 12px;
-                font-size: 16px;
-                font-weight: 700;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
-            }
-            button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 25px rgba(168, 85, 247, 0.6);
-            }
-            button:active {
-                transform: translateY(0);
-            }
-            .result-box {
-                background: rgba(34, 197, 94, 0.1);
-                border: 1px solid rgba(34, 197, 94, 0.3);
-                padding: 18px;
-                border-radius: 14px;
-                margin-bottom: 30px;
-                text-align: center;
-                animation: fadeIn 0.4s ease-out;
-            }
-            .result-title {
-                font-size: 12px;
-                font-weight: 700;
-                color: #4ade80;
-                text-transform: uppercase;
-                margin-bottom: 6px;
-            }
-            .result-key {
-                color: #fff;
-                font-family: monospace;
-                font-size: 18px;
-                font-weight: 700;
-                background: #000;
-                padding: 8px 14px;
-                border-radius: 8px;
-                display: inline-block;
-                border: 1px solid rgba(255,255,255,0.1);
-            }
-            .section-title {
-                font-size: 16px;
-                font-weight: 700;
-                margin-bottom: 15px;
-                color: #f1f5f9;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .key-list {
-                list-style: none;
-                max-height: 250px;
-                overflow-y: auto;
-                padding-right: 5px;
-            }
-            /* Стилизация скроллбара */
-            .key-list::-webkit-scrollbar {
-                width: 6px;
-            }
-            .key-list::-webkit-scrollbar-thumb {
-                background: rgba(168, 85, 247, 0.3);
-                border-radius: 4px;
-            }
-            .key-item {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                padding: 14px 18px;
-                border-radius: 12px;
-                margin-bottom: 10px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                transition: all 0.2s ease;
-            }
-            .key-item:hover {
-                background: rgba(255, 255, 255, 0.06);
-                border-color: rgba(168, 85, 247, 0.2);
-            }
-            .key-text {
-                font-family: monospace;
-                font-size: 14px;
-                color: #cbd5e1;
-            }
-            .badge {
-                padding: 4px 10px;
-                border-radius: 6px;
-                font-size: 11px;
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            .badge-free { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
-            .badge-premium { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
-            .badge-owner { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <div class="logo-panel"><i class="fa-solid fa-terminal"></i> WHYEN CORE</div>
-                <div class="subtitle">Система генерации и распределения токенов v{{ version }}</div>
-            </div>
-
-            {% if generated_key %}
-                <div class="result-box">
-                    <div class="result-title"><i class="fa-solid fa-circle-check"></i> Токен [{{ assigned_role.upper() }}] успешно создан</div>
-                    <div class="result-key">{{ generated_key }}</div>
-                </div>
-            {% endif %}
-
-            <form method="post" class="form-box">
-                <input type="hidden" name="pass" value="{{ password }}">
-                <input type="hidden" name="action" value="generate">
-                <label><i class="fa-solid fa-layer-group"></i> Уровень доступа токена</label>
-                <select name="role">
-                    <option value="premium">💎 Premium (Стандартный)</option>
-                    <option value="owner">👑 Owner (Создатель)</option>
-                </select>
+           ^
+SyntaxError: unterminated triple-quoted string literal (detected at line 269)
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'gunicorn app:app'
